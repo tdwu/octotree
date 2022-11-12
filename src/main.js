@@ -1,5 +1,23 @@
-$(document).ready(() => {
+$(document).ready(() => { 
   octotree.load(loadExtension);
+
+  function createAdapter() {
+    const githubUrls =  ['https://github.com','https://github.hpe.com']
+    const oschinaUrls = [     
+      'http://gitee.com', 'https://gitee.com',
+      'http://git.oschina.net', 'https://git.oschina.net'
+    ]
+    const bitbucketUrls = ['https://bitbucket.org']
+
+    const currentUrl = `${location.protocol}//${location.host}`
+    if (~githubUrls.indexOf(currentUrl)) {
+      return new GitHub()
+    } else if (~oschinaUrls.indexOf(currentUrl)) {
+      return new Oschina()
+    }  else if (~bitbucketUrls.indexOf(currentUrl)) {
+      return new Bitbucket()
+    }
+  }
 
   async function loadExtension(activationOpts = {}) {
     const $html = $('html');
@@ -10,7 +28,7 @@ $(document).ready(() => {
     const $views = $sidebar.find('.octotree-view');
     const $spinner = $sidebar.find('.octotree-spin');
     const $pinner = $sidebar.find('.octotree-pin');
-    const adapter = new GitHub();
+    const adapter =  createAdapter();
     const treeView = new TreeView($dom, adapter);
     const optsView = new OptionsView($dom, adapter);
     const helpPopup = new HelpPopup($dom);
